@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a1020">
+  <meta name="description" content="Calcolatore economico per The View 2027: costi fissi, budget open bar e punto di pareggio.">
+  <title>THE VIEW 2027 — Calcolatore evento</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070c18;
+      --surface: #10192b;
+      --surface2: #14203a;
+      --line: rgba(174,191,231,.15);
+      --text: #f3f6ff;
+      --muted: #a4b2cf;
+      --accent: #7b8eff;
+      --accent2: #66e4c0;
+      --danger: #ff8f9b;
+      --warning: #ffc87c;
+      --shadow: 0 20px 65px rgba(0, 0, 0, .28);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      min-height: 100vh; margin: 0; color: var(--text);
+      background:
+        radial-gradient(70rem 40rem at 86% -15%, rgba(78,69,180,.25), transparent 62%),
+        radial-gradient(55rem 30rem at -20% 15%, rgba(17,116,141,.17), transparent 62%),
+        var(--bg);
+      line-height: 1.5;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible { outline: 3px solid rgba(123,142,255,.6); outline-offset: 2px; }
+    .wrap { width: min(1310px, calc(100% - 44px)); margin-inline: auto; }
+    .header { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 25px 0 23px; border-bottom: 1px solid var(--line); }
+    .brand { display: flex; align-items: center; gap: 13px; min-width: 0; }
+    .brand-mark { width: 46px; height: 46px; display: grid; place-items: center; flex-shrink: 0; border-radius: 14px; border: 1px solid rgba(139,164,255,.6); color: #fff; font-weight: 900; letter-spacing: -.13em; font-size: 20px; padding-right: 3px; background: linear-gradient(140deg,#2e3b70,#131c35); box-shadow: inset 0 0 15px rgba(161,177,255,.08); }
+    .brand-name { font-weight: 850; letter-spacing: .15em; font-size: 14px; line-height: 1.2; }
+    .brand-sub { color: var(--muted); font-size: 12px; letter-spacing: .05em; margin-top: 3px; }
+    .header-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .ghost-btn { border-radius: 11px; padding: 10px 14px; background: rgba(255,255,255,.035); color: #dfe7ff; border: 1px solid var(--line); font-size: 13px; font-weight: 650; }
+    .ghost-btn:hover { background: rgba(255,255,255,.09); }
+    .intro { padding: 36px 0 29px; }
+    .eyebrow { display: flex; align-items: center; gap: 9px; color: var(--accent2); font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+    .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--accent2); box-shadow: 0 0 15px var(--accent2); }
+    h1 { margin: 12px 0 11px; font-size: clamp(29px, 4vw, 48px); line-height: 1.09; font-weight: 850; letter-spacing: -.047em; }
+    .gradient-text { background: linear-gradient(100deg,#a0aaff, #70e9d5); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .intro-desc { color: var(--muted); max-width: 780px; margin: 0; font-size: 15px; }
+    .dashboard { display: grid; grid-template-columns: minmax(355px, .92fr) minmax(0, 1.2fr); gap: 20px; align-items: start; padding-bottom: 46px; }
+    .left, .right { min-width: 0; display: grid; gap: 17px; }
+    .panel { padding: 22px; background: rgba(17, 26, 46, .9); border: 1px solid var(--line); border-radius: 21px; box-shadow: var(--shadow); }
+    .section-top { display:flex; gap: 11px; align-items:center; margin-bottom: 20px; }
+    .number { border-radius: 10px; display: inline-grid; place-items: center; width: 32px; height: 32px; font-size: 12px; font-weight: 900; color: #aebaff; background: rgba(111,128,246,.13); border: 1px solid rgba(140,153,250,.16); }
+    h2 { font-size: 17px; margin: 0; line-height: 1.25; font-weight: 760; letter-spacing: -.02em; }
+    .section-caption { font-size: 12px; color: var(--muted); margin: 4px 0 0; }
+    .fields { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+    .field { min-width: 0; }
+    label { display: block; color: #c2cee6; font-size: 12px; font-weight: 720; margin-bottom: 8px; }
+    .input-box { display: flex; align-items: center; gap: 9px; padding: 0 13px; border: 1px solid rgba(167,189,232,.2); border-radius: 12px; background: rgba(5,10,23,.44); min-width: 0; transition: border-color .15s; }
+    .input-box:focus-within { border-color: var(--accent); }
+    .input-box input { width: 100%; min-width: 0; color: white; border: 0; outline: none; background: transparent; padding: 13px 0; font-size: 20px; font-weight: 750; font-variant-numeric: tabular-nums; appearance: textfield; }
+    .input-box input::-webkit-inner-spin-button, .input-box input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .unit { color: #90a1c1; white-space: nowrap; font-weight: 750; font-size: 13px; }
+    .helper { color: var(--muted); font-size: 12px; margin: 10px 0 0; }
+    .aside-note { display: flex; align-items: start; gap: 9px; color: #bac9e4; background: rgba(109,126,254,.06); border: 1px solid rgba(109,126,254,.12); border-radius: 12px; padding: 12px; margin-top: 16px; font-size: 12px; }
+    .aside-note svg { flex: none; margin-top: 2px; }
+    .add-form { display: grid; grid-template-columns: minmax(0,1fr) 112px auto; gap: 9px; align-items: end; }
+    .add-form input, .cost-row input { width: 100%; min-width: 0; color: var(--text); outline: none; background: rgba(5,10,23,.45); border: 1px solid rgba(167,189,232,.21); border-radius: 10px; padding: 11px 12px; font-size: 13px; }
+    .add-form input:focus, .cost-row input:focus { border-color: var(--accent); }
+    .solid-btn { border: none; color: #09162a; border-radius: 11px; padding: 11px 16px; background: linear-gradient(112deg, #88a2ff, #72dcca); font-weight: 850; white-space: nowrap; }
+    .solid-btn:hover { filter: brightness(1.12); }
+    .cost-list { margin-top: 17px; display: grid; gap: 8px; }
+    .cost-row { display: grid; grid-template-columns: minmax(0,1fr) 110px 34px; gap: 8px; align-items: center; }
+    .cost-row input { padding: 9px 10px; }
+    .remove { background: rgba(255,143,155,.09); border: 1px solid rgba(255,143,155,.18); color: #ffc2c9; border-radius: 9px; width: 34px; height: 37px; font-size: 19px; }
+    .remove:hover { background: rgba(255,143,155,.2); }
+    .empty { text-align: center; padding: 20px 10px; border: 1px dashed rgba(167,189,232,.16); border-radius: 12px; color: var(--muted); font-size: 13px; }
+    .cost-total { border-top: 1px solid var(--line); padding-top: 15px; margin-top: 16px; display:flex; justify-content: space-between; align-items:center; gap: 12px; font-weight: 730; font-size: 13px; }
+    .cost-total strong { font-size: 22px; font-weight: 850; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+    .status-panel { padding: 26px 27px; background: linear-gradient(135deg,rgba(61,73,146,.45),rgba(19,33,54,.98) 55%, rgba(26,71,75,.42)); border-color: rgba(149,171,250,.32); overflow:hidden; position: relative; }
+    .status-panel:after { content:""; position:absolute; width: 240px; height: 240px; border-radius: 50%; top: -140px; right: -90px; background: radial-gradient(circle,rgba(141,160,255,.19),transparent 68%); pointer-events: none; }
+    .result-top { display: flex; align-items:center; justify-content: space-between; flex-wrap:wrap; gap: 12px; }
+    .result-title { color: #d1daf3; font-size: 13px; font-weight: 750; text-transform: uppercase; letter-spacing: .09em; }
+    .tag { display: inline-flex; align-items:center; gap: 7px; padding: 6px 9px; border-radius: 100px; background: rgba(107,231,195,.11); color: #8ff3d3; border:1px solid rgba(107,231,195,.2); font-size: 11px; font-weight: 750; }
+    .tag.warn { background: rgba(255,202,128,.11); color: var(--warning); border-color: rgba(255,202,128,.23); }
+    .tag.bad { background: rgba(255,143,155,.1); color: #ffb7be; border-color: rgba(255,143,155,.25); }
+    .result-main { font-size: clamp(62px,8vw,98px); font-weight: 900; line-height: 1.12; letter-spacing: -.085em; margin: 16px 0 3px; font-variant-numeric: tabular-nums; }
+    .result-main.text-result { font-size: clamp(24px,4vw,38px); letter-spacing: -.04em; padding: 23px 0 7px; }
+    .result-sub { color:#c7d5ef; font-size:14px; }
+    .rule { height: 1px; background: rgba(185,202,244,.18); margin: 24px 0 19px; }
+    .equation { color:#c9d3eb; font-size: 13px; overflow-wrap:anywhere; }
+    .equation strong { color: white; font-weight:800; }
+    .result-footer { display: flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap: 15px; margin-top: 19px; }
+    .result-footer .mini { font-size: 12px; color:var(--muted); }
+    .result-footer .mini b { color: white; }
+    .jump-btn { padding: 9px 13px; border-radius: 10px; border: 1px solid rgba(142,225,207,.4); background: rgba(90,210,189,.12); color:#a2ffe7; font-size: 12px; font-weight: 800; }
+    .jump-btn:hover { background:rgba(90,210,189,.22); }
+    .jump-btn:disabled { opacity:.4; cursor:default; }
+    .metrics { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 13px; }
+    .metric { padding: 20px; background: rgba(17, 26, 46, .9); border: 1px solid var(--line); border-radius: 17px; min-width: 0; }
+    .metric-label { color: var(--muted); font-size: 12px; font-weight: 690; }
+    .metric-value { font-size: clamp(21px,2.7vw,30px); letter-spacing: -.044em; font-weight: 850; margin: 5px 0 2px; font-variant-numeric: tabular-nums; overflow-wrap:anywhere; }
+    .metric-caption { color: #8697b8; font-size:11px; }
+    .positive { color:#83edc7; }
+    .negative { color:#ffa6af; }
+    .neutral { color:#e7edff; }
+    .breakdown-title { display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap: 9px; margin-bottom: 18px; }
+    .breakdown-title span { font-size:12px; color: var(--muted); }
+    .bar-item { margin-top:17px; }
+    .bar-label { display:flex; justify-content:space-between; gap:9px; align-items:center; font-size:12px; color:#ccd7eb; margin-bottom:7px; }
+    .bar-label strong { font-variant-numeric:tabular-nums; color:#eef2ff; }
+    .track { background:rgba(114,130,171,.12); width:100%; border-radius: 10px; height:9px; overflow:hidden; }
+    .fill { display:block; height:100%; width:0%; border-radius: 10px; transition:width .15s ease; }
+    .fill-revenue {background:linear-gradient(90deg,#6c85ff,#a5b3ff);}
+    .fill-fixed {background:linear-gradient(90deg,#f1ac72,#ffe09f);}
+    .fill-alcohol {background:linear-gradient(90deg,#46bdac,#82ecd0);}
+    .profit-strip { margin-top: 22px; padding: 14px 15px; border:1px solid var(--line); background:rgba(8,16,34,.42); border-radius:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+    .profit-strip small { display:block; color:var(--muted); margin-bottom:3px; }
+    .profit-strip strong { font-size: 19px; font-variant-numeric: tabular-nums; }
+    .validation { margin-top:11px; color:#ffc8cf; font-size: 12px; min-height: 0; }
+    .footer { padding:20px 0 35px; color:#8d9dbc; border-top:1px solid var(--line); font-size:12px; display:flex; gap:14px; justify-content:space-between; flex-wrap:wrap; }
+    .sr-only { position:absolute; height:1px; width:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    @media (max-width: 900px) { .dashboard { grid-template-columns: 1fr; } .right { grid-row: 1; } }
+    @media (max-width: 575px) {
+      .wrap { width: min(100% - 26px, 1310px); }
+      .header { padding:15px 0; align-items:flex-start; }
+      .brand-mark { width:41px; height:41px; }
+      .header-actions { gap:6px; }
+      .ghost-btn { padding: 8px 9px; font-size:11px; }
+      .intro { padding:25px 0; }
+      .intro-desc { font-size:13px; }
+      .panel { padding:17px; border-radius:17px; }
+      .status-panel { padding:20px; }
+      .fields {gap:10px;}
+      .input-box {padding:0 10px;}
+      .input-box input {font-size:18px;}
+      .add-form {grid-template-columns: minmax(0,1fr) 89px;}
+      .add-form button {grid-column:1 / -1;}
+      .cost-row {grid-template-columns:minmax(0,1fr) 94px 33px;}
+      .metrics {gap:9px;}
+      .metric {padding:15px 13px;}
+      .metric-value {font-size:21px;}
+      .result-main {font-size:70px;}
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none!important; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">TV</div>
+        <div><div class="brand-name">THE VIEW 2027</div><div class="brand-sub">EVENT FINANCE STUDIO · NYE</div></div>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="ghost-btn" id="exportBtn" title="Scarica un backup di tutti i dati">↓ Esporta</button>
+        <button type="button" class="ghost-btn" id="importBtn" title="Carica un backup salvato">↑ Importa</button>
+        <input type="file" id="importFile" accept="application/json,.json" class="sr-only" aria-label="Seleziona backup JSON">
+      </div>
+    </header>
+
+    <section class="intro">
+      <div class="eyebrow"><span class="pulse"></span> CALCOLATORE LIVE · 31 DICEMBRE 2026</div>
+      <h1>La festa è grande.<br><span class="gradient-text">I conti devono tornare.</span></h1>
+      <p class="intro-desc">Imposta il prezzo dei biglietti, i costi fissi e il budget di alcol per ospite. Il sistema trova <b>automaticamente quante persone servono per andare in pari</b> e aggiorna le stime quando cambi un valore.</p>
+    </section>
+
+    <main class="dashboard">
+      <div class="left">
+        <section class="panel" aria-labelledby="ticketTitle">
+          <div class="section-top"><span class="number">01</span><div><h2 id="ticketTitle">Biglietti e partecipanti</h2><p class="section-caption">Personalizza il prezzo e il pubblico previsto.</p></div></div>
+          <div class="fields">
+            <div class="field"><label for="ticketPrice">Prezzo del biglietto</label><div class="input-box"><input id="ticketPrice" type="number" min="0" max="1000000" step="0.01" inputmode="decimal" value="35"><span class="unit">€</span></div></div>
+            <div class="field"><label for="attendees">Partecipanti simulati</label><div class="input-box"><input id="attendees" type="number" min="0" max="10000000" step="1" inputmode="numeric" value="100"><span class="unit">pers.</span></div></div>
+          </div>
+          <div class="fields" style="margin-top:15px"><div class="field"><label for="capacity">Capienza massima (facoltativa)</label><div class="input-box"><input id="capacity" type="number" min="0" max="10000000" step="1" inputmode="numeric" placeholder="Nessun limite"><span class="unit">pers.</span></div></div></div>
+          <p class="helper">Il numero di partecipanti è solo una simulazione. Il punto di pareggio viene calcolato indipendentemente da questo valore.</p>
+        </section>
+
+        <section class="panel" aria-labelledby="barTitle">
+          <div class="section-top"><span class="number">02</span><div><h2 id="barTitle">Budget open bar</h2><p class="section-caption">Il costo dell'alcol cresce con il pubblico.</p></div></div>
+          <div class="fields">
+            <div class="field"><label for="litersPerPerson">Litri per persona</label><div class="input-box"><input id="litersPerPerson" type="number" min="0" max="10000" step="0.01" inputmode="decimal" value="0.33"><span class="unit">L</span></div></div>
+            <div class="field"><label for="literPrice">Prezzo per litro</label><div class="input-box"><input id="literPrice" type="number" min="0" max="1000000" step="0.01" inputmode="decimal" value="15"><span class="unit">€/L</span></div></div>
+          </div>
+          <div class="aside-note">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8v.5"/></svg>
+            <span>Il costo per partecipante è <b id="costPerPersonText">4,95 €</b>: litri × prezzo/litro. Usa la stessa definizione di litro per quantità e prezzo. La stima è per gli acquisti, non un consumo da raggiungere.</span>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="costTitle">
+          <div class="section-top"><span class="number">03</span><div><h2 id="costTitle">Costi fissi</h2><p class="section-caption">Location, DJ, sicurezza, allestimenti, ecc.</p></div></div>
+          <form id="addForm" class="add-form" autocomplete="off">
+            <div><label for="newName">Descrizione</label><input id="newName" type="text" maxlength="90" placeholder="Es. Affitto location" required></div>
+            <div><label for="newPrice">Importo (€)</label><input id="newPrice" type="number" min="0" max="100000000" step="0.01" inputmode="decimal" placeholder="500" required></div>
+            <button type="submit" class="solid-btn">+ Aggiungi</button>
+          </form>
+          <p class="validation" id="costError" role="alert"></p>
+          <div id="costList" class="cost-list" aria-live="polite"></div>
+          <div class="cost-total"><span>Totale costi fissi</span><strong id="fixedTotal">0,00 €</strong></div>
+          <p class="helper">Modifica o elimina una voce quando vuoi. I dati si salvano automaticamente su questo browser.</p>
+        </section>
+      </div>
+
+      <div class="right">
+        <section class="panel status-panel" aria-labelledby="breakTitle" aria-live="polite">
+          <div class="result-top"><div class="result-title" id="breakTitle">Persone minime per andare in pari</div><div class="tag" id="statusTag">● Calcolo attivo</div></div>
+          <div class="result-main" id="breakEvenNumber">0</div>
+          <div class="result-sub" id="breakEvenDescription">Con questo pubblico copri tutti i costi previsti.</div>
+          <div class="rule"></div>
+          <div class="equation" id="formulaText">Costi fissi ÷ (prezzo biglietto − costo alcol per persona)</div>
+          <div class="result-footer">
+            <div class="mini">Margine per biglietto<br><b id="marginValue">30,05 €</b></div>
+            <button class="jump-btn" id="useBreakEven" type="button">Simula il pareggio →</button>
+          </div>
+        </section>
+
+        <section class="metrics" aria-label="Risultati della simulazione">
+          <div class="metric"><div class="metric-label">Alcol necessario</div><div class="metric-value neutral" id="totalLiters">33 L</div><div class="metric-caption" id="litersCaption">Per 100 partecipanti</div></div>
+          <div class="metric"><div class="metric-label">Costo totale alcol</div><div class="metric-value neutral" id="alcoholCost">495,00 €</div><div class="metric-caption">Varia con i partecipanti</div></div>
+          <div class="metric"><div class="metric-label">Incasso biglietti</div><div class="metric-value neutral" id="revenue">3.500,00 €</div><div class="metric-caption">Prezzo × partecipanti</div></div>
+          <div class="metric"><div class="metric-label">Utile / perdita previsti</div><div class="metric-value positive" id="profit">3.005,00 €</div><div class="metric-caption">Incassi meno tutti i costi</div></div>
+        </section>
+
+        <section class="panel" aria-labelledby="simulationTitle">
+          <div class="breakdown-title"><h2 id="simulationTitle">Analisi della simulazione</h2><span id="simulationPeople">100 partecipanti</span></div>
+          <div class="bar-item"><div class="bar-label"><span>Incassi</span><strong id="revenueBarText">3.500,00 €</strong></div><div class="track"><span class="fill fill-revenue" id="revenueBar"></span></div></div>
+          <div class="bar-item"><div class="bar-label"><span>Costi fissi</span><strong id="fixedBarText">0,00 €</strong></div><div class="track"><span class="fill fill-fixed" id="fixedBar"></span></div></div>
+          <div class="bar-item"><div class="bar-label"><span>Alcol</span><strong id="alcoholBarText">495,00 €</strong></div><div class="track"><span class="fill fill-alcohol" id="alcoholBar"></span></div></div>
+          <div class="profit-strip"><div><small>Prezzo minimo del biglietto per andare in pari con i partecipanti simulati</small><strong id="minimumTicketPrice">4,95 €</strong></div><span class="tag" id="capacityTag">Nessun limite di capienza</span></div>
+          <p class="helper" id="capacityMessage">Se imposti una capienza massima, verificheremo anche che il pareggio sia raggiungibile nel locale.</p>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer"><span>THE VIEW 2027 · Simulatore economico</span><span>Valori indicativi · Ricorda di prevedere anche acqua, analcolici, trasporti sicuri e ogni altro costo dell'evento.</span></footer>
+  </div>
+<script>
+(() => {
+  'use strict';
+  const STORAGE_KEY = 'the-view-2027-budget-v1';
+  const defaults = { ticketPrice: 35, attendees: 100, litersPerPerson: .33, literPrice: 15, capacity: '', costs: [] };
+  const $ = id => document.getElementById(id);
+  const money = value => new Intl.NumberFormat('it-IT', { style:'currency', currency:'EUR', minimumFractionDigits:2, maximumFractionDigits:2 }).format(value);
+  const decimal = (value, maximum = 2) => new Intl.NumberFormat('it-IT',{ maximumFractionDigits:maximum }).format(value);
+  const integer = value => new Intl.NumberFormat('it-IT',{ maximumFractionDigits:0 }).format(value);
+  const nonNegative = (raw, fallback = 0) => {
+    if (raw === '' || raw === null || raw === undefined) return fallback;
+    const value = Number(String(raw).replace(',', '.'));
+    return Number.isFinite(value) && value >= 0 ? value : fallback;
+  };
+  const safeInt = raw => Math.max(0, Math.floor(nonNegative(raw)));
+  const cleanCosts = costs => Array.isArray(costs) ? costs.slice(0, 500).filter(c => c && typeof c === 'object').map(c => ({
+    id: String(c.id ?? createId()), name: String(c.name ?? '').slice(0,90), amount: Math.min(100000000, nonNegative(c.amount))
+  })) : [];
+  const createId = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  let state;
+  try {
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    state = stored && typeof stored === 'object' ? {
+      ticketPrice: nonNegative(stored.ticketPrice, defaults.ticketPrice),
+      attendees: safeInt(stored.attendees),
+      litersPerPerson: nonNegative(stored.litersPerPerson, defaults.litersPerPerson),
+      literPrice: nonNegative(stored.literPrice, defaults.literPrice),
+      capacity: stored.capacity === '' || stored.capacity === null || stored.capacity === undefined ? '' : safeInt(stored.capacity),
+      costs: cleanCosts(stored.costs)
+    } : structuredClone(defaults);
+  } catch { state = structuredClone(defaults); }
+  const save = () => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* storage may be restricted in private mode */ } };
+  const updateInputs = () => {
+    for (const key of ['ticketPrice','attendees','litersPerPerson','literPrice','capacity']) $(key).value = state[key];
+  };
+  const bounded = (num, max) => Math.min(max, Math.max(0, num));
+
+  function renderCosts() {
+    const list = $('costList');
+    list.replaceChildren();
+    if (state.costs.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'Nessun costo inserito. Aggiungi una voce qui sopra per iniziare.';
+      list.appendChild(empty);
+    }
+    for (const cost of state.costs) {
+      const row = document.createElement('div');
+      row.className = 'cost-row';
+      const label = document.createElement('input');
+      label.type = 'text'; label.maxLength = 90; label.value = cost.name;
+      label.setAttribute('aria-label', 'Descrizione costo');
+      label.addEventListener('input', () => { cost.name = label.value; save(); });
+      const amount = document.createElement('input');
+      amount.type = 'number'; amount.min='0'; amount.max='100000000'; amount.step='0.01'; amount.inputMode='decimal'; amount.value = cost.amount;
+      amount.setAttribute('aria-label', 'Importo costo in euro');
+      amount.addEventListener('input', () => { cost.amount = bounded(nonNegative(amount.value), 100000000); render(); save(); });
+      const remove = document.createElement('button');
+      remove.type = 'button'; remove.className = 'remove'; remove.title='Elimina costo';
+      remove.setAttribute('aria-label', `Elimina ${cost.name}`); remove.textContent='×';
+      remove.addEventListener('click', () => { state.costs = state.costs.filter(c => c !== cost); renderCosts(); render(); save(); });
+      row.append(label,amount,remove); list.appendChild(row);
+    }
+  }
+
+  function render() {
+    const people = bounded(state.attendees, 10000000);
+    const price = bounded(state.ticketPrice, 1000000);
+    const litersPerPerson = bounded(state.litersPerPerson, 10000);
+    const literPrice = bounded(state.literPrice, 1000000);
+    const costPerPerson = litersPerPerson * literPrice;
+    const fixed = state.costs.reduce((sum,c) => sum + bounded(nonNegative(c.amount),100000000),0);
+    const margin = price - costPerPerson;
+    const liters = people * litersPerPerson;
+    const alcohol = liters * literPrice;
+    const revenue = people * price;
+    const profit = revenue - fixed - alcohol;
+    // Una piccola tolleranza evita errori floating point nei casi di pareggio esatto.
+    const EPSILON = 1e-8;
+    const possible = margin > EPSILON;
+    const breakeven = possible ? Math.ceil(Math.max(0, (fixed - EPSILON) / margin)) : (fixed <= EPSILON && margin >= -EPSILON ? 0 : null);
+    const capacity = state.capacity === '' ? null : bounded(state.capacity,10000000);
+    const withinCapacity = capacity === null || (breakeven !== null && breakeven <= capacity);
+
+    $('costPerPersonText').textContent = money(costPerPerson);
+    $('fixedTotal').textContent = money(fixed);
+    $('marginValue').textContent = money(margin);
+    $('totalLiters').textContent = `${decimal(liters)} L`;
+    $('litersCaption').textContent = `Per ${integer(people)} ${people === 1 ? 'partecipante' : 'partecipanti'}`;
+    $('alcoholCost').textContent = money(alcohol);
+    $('revenue').textContent = money(revenue);
+    $('profit').textContent = money(profit);
+    $('profit').className = `metric-value ${profit > EPSILON ? 'positive' : profit < -EPSILON ? 'negative' : 'neutral'}`;
+    $('simulationPeople').textContent = `${integer(people)} ${people === 1 ? 'partecipante' : 'partecipanti'}`;
+    $('revenueBarText').textContent = money(revenue);
+    $('fixedBarText').textContent = money(fixed);
+    $('alcoholBarText').textContent = money(alcohol);
+    const scale = Math.max(revenue, fixed, alcohol, 0.000001);
+    $('revenueBar').style.width = `${bounded(revenue / scale * 100, 100)}%`;
+    $('fixedBar').style.width = `${bounded(fixed / scale * 100, 100)}%`;
+    $('alcoholBar').style.width = `${bounded(alcohol / scale * 100, 100)}%`;
+
+    const ticketMin = people > 0 ? Math.ceil((fixed / people + costPerPerson - EPSILON) * 100)/100 : (fixed === 0 ? costPerPerson : null);
+    $('minimumTicketPrice').textContent = ticketMin === null ? '—' : money(ticketMin);
+    const noMargin = margin <= EPSILON && fixed > EPSILON;
+    const output = $('breakEvenNumber');
+    output.classList.toggle('text-result', breakeven === null);
+    output.textContent = breakeven === null ? 'Non raggiungibile' : integer(breakeven);
+    const tag = $('statusTag');
+    tag.className = 'tag';
+    if (breakeven === null) {
+      tag.classList.add('bad'); tag.textContent='● Margine insufficiente';
+      $('breakEvenDescription').textContent = noMargin ? 'Il biglietto non copre nemmeno il costo dell’alcol per ospite, quindi aggiungere persone non recupera i costi fissi.' : 'Ogni partecipante genera una perdita: cambia prezzo o budget alcol.';
+    } else if (!withinCapacity) {
+      tag.classList.add('warn'); tag.textContent='● Oltre la capienza';
+      $('breakEvenDescription').textContent = `Servono almeno ${integer(breakeven)} persone, ma la capienza impostata è ${integer(capacity)}.`;
+    } else {
+      tag.textContent='● Pareggio calcolato';
+      $('breakEvenDescription').textContent = breakeven === 0 ? 'Non sono presenti costi fissi da recuperare. Il risultato matematico è zero.' : `Con ${integer(breakeven)} ${breakeven === 1 ? 'biglietto venduto' : 'biglietti venduti'} copri costi fissi e alcol previsto per quei partecipanti.`;
+    }
+    $('formulaText').innerHTML = `<strong>Formula:</strong> costi fissi ÷ (prezzo biglietto − litri a persona × €/L)<br>` +
+      `<span>${money(fixed)} ÷ (${money(price)} − ${money(costPerPerson)})` + (possible && fixed > EPSILON ? ` = ${decimal(fixed/margin)} → arrotondato a ${integer(breakeven)}` : '') + `</span>`;
+    $('useBreakEven').disabled = breakeven === null || breakeven > 10000000 || (capacity !== null && breakeven > capacity);
+    if (capacity === null) {
+      $('capacityTag').className='tag'; $('capacityTag').textContent='Capienza non impostata';
+      $('capacityMessage').textContent='Puoi indicare una capienza massima per verificare se il pareggio è realisticamente raggiungibile nel locale.';
+    } else if (people > capacity) {
+      $('capacityTag').className='tag warn'; $('capacityTag').textContent='Simulazione oltre capienza';
+      $('capacityMessage').textContent=`Stai simulando ${integer(people)} presenze, ma hai impostato una capienza di ${integer(capacity)}. Riduci la simulazione.`;
+    } else if (!withinCapacity) {
+      $('capacityTag').className='tag bad'; $('capacityTag').textContent='Pareggio fuori capienza';
+      $('capacityMessage').textContent=breakeven === null ? 'Con questi costi variabili non puoi raggiungere il pareggio, indipendentemente dalla capienza.' : `Con al massimo ${integer(capacity)} ospiti non riesci a coprire i costi ai prezzi attuali.`;
+    } else {
+      $('capacityTag').className='tag'; $('capacityTag').textContent='Capienza compatibile';
+      $('capacityMessage').textContent=`Il punto di pareggio è raggiungibile entro la capienza di ${integer(capacity)} persone.`;
+    }
+  }
+
+  for (const key of ['ticketPrice','attendees','litersPerPerson','literPrice','capacity']) {
+    $(key).addEventListener('input', () => {
+      if (key === 'capacity' && $(key).value === '') state[key] = '';
+      else if (key === 'attendees' || key === 'capacity') state[key] = bounded(safeInt($(key).value),10000000);
+      else state[key] = bounded(nonNegative($(key).value), key === 'litersPerPerson' ? 10000 : 1000000);
+      save(); render();
+    });
+  }
+  $('addForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = $('newName').value.trim();
+    const rawAmount = $('newPrice').value;
+    const amount = Number(rawAmount);
+    if (!name || !rawAmount || !Number.isFinite(amount) || amount < 0 || amount > 100000000) {
+      $('costError').textContent = 'Inserisci una descrizione e un importo valido maggiore o uguale a zero.'; return;
+    }
+    if (state.costs.length >= 500) { $('costError').textContent = 'Limite massimo di 500 costi.'; return; }
+    state.costs.push({ id:createId(), name, amount });
+    $('costError').textContent = '';
+    $('newName').value = ''; $('newPrice').value = '';
+    renderCosts(); render(); save(); $('newName').focus();
+  });
+  $('useBreakEven').addEventListener('click', () => {
+    const fixed = state.costs.reduce((sum,c)=>sum + nonNegative(c.amount),0);
+    const margin = state.ticketPrice-state.litersPerPerson*state.literPrice;
+    const result = margin > 1e-8 ? Math.ceil(Math.max(0,(fixed-1e-8)/margin)) : (fixed===0 && margin >= -1e-8 ? 0 : null);
+    if (result === null || result > 10000000 || (state.capacity !== '' && result > state.capacity)) return;
+    state.attendees = result; $('attendees').value = result; save(); render();
+  });
+  $('exportBtn').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify({ ...state, exportedAt: new Date().toISOString(), schemaVersion: 1 }, null, 2)], { type:'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download='the-view-2027-budget.json'; document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 500);
+  });
+  $('importBtn').addEventListener('click', () => $('importFile').click());
+  $('importFile').addEventListener('change', async e => {
+    const file = e.target.files?.[0]; if (!file) return;
+    try {
+      if (file.size > 1000000) throw new Error('File troppo grande.');
+      const data = JSON.parse(await file.text());
+      if (!data || typeof data !== 'object' || !Array.isArray(data.costs)) throw new Error('Il file non contiene un backup valido.');
+      state = {
+        ticketPrice: bounded(nonNegative(data.ticketPrice,defaults.ticketPrice),1000000),
+        attendees: bounded(safeInt(data.attendees),10000000),
+        litersPerPerson: bounded(nonNegative(data.litersPerPerson,defaults.litersPerPerson),10000),
+        literPrice: bounded(nonNegative(data.literPrice,defaults.literPrice),1000000),
+        capacity: data.capacity === '' || data.capacity === null || data.capacity === undefined ? '' : bounded(safeInt(data.capacity),10000000),
+        costs: cleanCosts(data.costs)
+      };
+      updateInputs(); renderCosts(); render(); save(); alert('Backup importato correttamente.');
+    } catch(error) { alert('Importazione non riuscita: ' + error.message); }
+    e.target.value = '';
+  });
+
+  updateInputs(); renderCosts(); render();
+})();
+</script>
+</body>
+</html>
